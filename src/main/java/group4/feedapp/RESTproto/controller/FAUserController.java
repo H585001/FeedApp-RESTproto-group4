@@ -75,7 +75,7 @@ public class FAUserController {
             System.out.println(String.format("User with the id  \"%s\" not found!", id));
             // TODO Exception
         }else {
-        	user.getVotes().stream().forEach(v -> pollService.deleteVote(v));
+        	//user.getVotes().stream().forEach(v -> pollService.deleteVote(v));
         }
         
         return user;
