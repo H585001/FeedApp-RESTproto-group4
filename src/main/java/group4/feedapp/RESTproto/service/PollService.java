@@ -68,10 +68,16 @@ public class PollService {
 		return pollDAO.updatePoll(id, updatedPoll);
 	}
 	
+	public Vote getUserVote(Long pollId, Long userId) {
+		Poll poll = getPoll(pollId);
+		FAUser user = userDAO.readUser(userId);
+		return voteDAO.findUserVote(poll, user);
+	}
+	
 	public Vote voteOnPoll(Long pollId, Long userId, Vote vote) {
 		Poll poll = getPoll(pollId);
 		FAUser voter = userDAO.readUser(userId);
-		if(poll != null && voter != null && voteDAO.findUserVote(pollId, userId) == null) {
+		if(vote!= null && poll!= null && voter != null && voteDAO.findUserVote(poll, voter) == null) {
 			poll.getUserVotes().add(vote);
 			if(vote.getAnswer()) {
 				poll.setYesCount(poll.getYesCount() + 1);
@@ -103,5 +109,23 @@ public class PollService {
 			return votes;
 		}
 		return null;
+	}
+
+	public void deleteVote(Vote v) {
+		Poll poll = v.getVotePoll();
+		//if status
+		if(v.getAnswer()) {
+			poll.setYesCount(poll.getYesCount() - 1);
+		}else {
+			poll.setNoCount(poll.getNoCount() - 1);
+		}
+		poll.getUserVotes().remove(v);
+		pollDAO.updatePoll(poll.getId(), poll);
+		voteDAO.deleteVote(v.getId());
+	}
+
+	public Collection<Poll> getUserPolls(Long userId) {
+		FAUser user = userDAO.readUser(userId);
+		return pollDAO.getUserPolls(user);
 	}
 }

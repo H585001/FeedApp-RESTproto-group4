@@ -81,7 +81,6 @@ public class FAUserDAOImplementation implements FAUserDAO {
 	public FAUser readUser(Long id) {
 		EntityManager em = emf.createEntityManager();        
         FAUser user = null;
-
 		try {
 			user = em.find(FAUser.class, id);
 		} catch (Throwable e) {
@@ -119,7 +118,7 @@ public class FAUserDAOImplementation implements FAUserDAO {
 				user.setEmail(updatedUser.getEmail());
 				user.setAdmin(updatedUser.isAdmin());
 				user.setName(updatedUser.getName());
-				user.setCreatedPolls(updatedUser.getCreatedPolls());
+				//user.setCreatedPolls(updatedUser.getCreatedPolls());
 				user.setPassword(updatedUser.getPassword());
 				user.setVotes(updatedUser.getVotes());
 			}

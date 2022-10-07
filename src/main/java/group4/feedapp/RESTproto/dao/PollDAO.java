@@ -14,4 +14,5 @@ public interface PollDAO {
 	Collection<Poll> readPolls();
 	Poll updatePoll(Long id, Poll updatedPoll);
 	Poll deletePoll(Long id);
+	Collection<Poll> getUserPolls(FAUser user);
 }

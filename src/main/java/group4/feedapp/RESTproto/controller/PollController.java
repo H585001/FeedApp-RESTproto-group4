@@ -12,17 +12,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import group4.feedapp.RESTproto.model.FAUser;
 import group4.feedapp.RESTproto.model.Poll;
+import group4.feedapp.RESTproto.model.Vote;
 import group4.feedapp.RESTproto.service.FAUserService;
 import group4.feedapp.RESTproto.service.PollService;
 
 @RestController
 public class PollController {
 	private final PollService pollService;
-	private final FAUserService userService;
 
 	public PollController(PollService pollService, FAUserService userService) {
 		this.pollService = pollService;
-		this.userService = userService;
 	}
 	
 	@GetMapping("/polls")
@@ -55,16 +54,32 @@ public class PollController {
 
         return poll;
     }
+    
+    @PostMapping("/polls/{pollId}/{userId}")
+    public Poll voteOnPoll(@RequestBody Vote vote, @PathVariable Long pollId, @PathVariable Long userId) {
 
-    @PostMapping("/polls")
-    public Poll addPoll(@RequestBody Poll newPoll, Long creatorId) {
-    	FAUser creator = userService.getUser(creatorId);
-        return pollService.addPoll(newPoll.getQuestion(), newPoll.getNoCount(), newPoll.getYesCount(), 
-        		newPoll.getStartTime(), newPoll.getEndTime(),newPoll.isPublic(), newPoll.getStatus(), 
-        		newPoll.getAccessCode(), creator);
+        Vote userVote = pollService.voteOnPoll(pollId, userId, vote);
+
+        if (userVote != null) {
+          return pollService.getPoll(pollId);
+        }
+        
+        return null;
+    }
+    
+    @GetMapping("/polls/{pollId}/{userId}")
+    public Vote getUserVoteOnPoll(@PathVariable Long pollId, @PathVariable Long userId) {
+
+        Vote vote = pollService.getUserVote(pollId, userId);
+
+        if (vote != null) {
+          return vote;
+        }
+        
+        return null;
     }
 
-    @DeleteMapping("/poll/{id}")
+    @DeleteMapping("/polls/{id}")
     public Poll deletePoll(@PathVariable Long id) {
 
         Poll poll = pollService.deletePoll(id);

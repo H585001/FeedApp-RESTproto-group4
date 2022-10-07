@@ -3,12 +3,15 @@ package group4.feedapp.RESTproto.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+
+import org.eclipse.persistence.annotations.CascadeOnDelete;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -22,11 +25,13 @@ public class FAUser {
     private String name;
     private boolean isAdmin;
     
-    @OneToMany(fetch = FetchType.LAZY, mappedBy="creator", orphanRemoval=true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="creator", cascade={CascadeType.REMOVE}, orphanRemoval=true)
+    @CascadeOnDelete
     @JsonIgnore
     private List<Poll> createdPolls;
     
-    @OneToMany (fetch = FetchType.LAZY, mappedBy = "voter", orphanRemoval=true)
+    @OneToMany (fetch = FetchType.LAZY, mappedBy = "voter", cascade={CascadeType.REMOVE},orphanRemoval=true)
+    @CascadeOnDelete
     @JsonIgnore
     private List<Vote> votes;
     

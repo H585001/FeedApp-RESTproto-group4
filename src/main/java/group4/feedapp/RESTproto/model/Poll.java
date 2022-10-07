@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
+import org.eclipse.persistence.annotations.CascadeOnDelete;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -34,11 +37,13 @@ public class Poll {
 	@JsonIgnore
 	private FAUser creator;
 	
-	@OneToMany (fetch = FetchType.LAZY, mappedBy = "votePoll", orphanRemoval=true)
+	@OneToMany (fetch = FetchType.LAZY, mappedBy = "votePoll", cascade={CascadeType.REMOVE}, orphanRemoval=true)
+	@CascadeOnDelete
 	@JsonIgnore
 	private List<Vote> userVotes;
 	
-	@OneToMany (fetch = FetchType.LAZY, mappedBy = "iotVotePoll", orphanRemoval=true)
+	@OneToMany (fetch = FetchType.LAZY, mappedBy = "iotVotePoll", cascade={CascadeType.REMOVE}, orphanRemoval=true)
+	@CascadeOnDelete
 	@JsonIgnore
 	private List<IoTVotes> iotVotes;
 	

@@ -178,4 +178,20 @@ public class PollDAOImplementation implements PollDAO {
 		return poll;
 	}
 
+	@Override
+	public Collection<Poll> getUserPolls(FAUser user) {
+		EntityManager em = emf.createEntityManager();
+		Collection<Poll> polls = null;
+		
+		try {
+			TypedQuery<Poll> query = em.createQuery(
+					"SELECT p FROM Poll p WHERE p.creator = :user", Poll.class);
+			query.setParameter("user", user);
+			polls = query.getResultList();
+		} finally {
+			em.close();
+		}
+		return polls;
+	}
+
 }

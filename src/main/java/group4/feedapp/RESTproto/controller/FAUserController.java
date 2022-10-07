@@ -11,14 +11,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import group4.feedapp.RESTproto.model.FAUser;
+import group4.feedapp.RESTproto.model.Poll;
 import group4.feedapp.RESTproto.service.FAUserService;
+import group4.feedapp.RESTproto.service.PollService;
 
 @RestController
 public class FAUserController {
 	private final FAUserService userService;
+	private final PollService pollService;
 
-	public FAUserController(FAUserService userService) {
+	public FAUserController(FAUserService userService, PollService pollService) {
 		this.userService = userService;
+		this.pollService = pollService;
 	}
 	
 	@GetMapping("/users")
@@ -37,6 +41,11 @@ public class FAUserController {
         }
 
         return user;
+    }
+    
+    @GetMapping("/users/{id}/polls")
+    public Collection<Poll> getUserPolls(@PathVariable Long id) {
+    	return pollService.getUserPolls(id);
     }
 
     @PutMapping("/users/{id}")
@@ -59,15 +68,31 @@ public class FAUserController {
 
     @DeleteMapping("/users/{id}")
     public FAUser deleteUser(@PathVariable Long id) {
-
+    	
         FAUser user = userService.deleteUser(id);
 
         if (user == null) {
             System.out.println(String.format("User with the id  \"%s\" not found!", id));
             // TODO Exception
+        }else {
+        	user.getVotes().stream().forEach(v -> pollService.deleteVote(v));
         }
-
+        
         return user;
     }	
+    
+    @PostMapping("/users/{id}/polls")
+    public Poll addPoll(@RequestBody Poll newPoll, @PathVariable Long id) {
+    	FAUser creator = userService.getUser(id);
+    	
+    	 if (creator == null) {
+             System.out.println(String.format("User with the id  \"%s\" not found!", id));
+             return null;
+         }
+    	
+        return pollService.addPoll(newPoll.getQuestion(), newPoll.getNoCount(), newPoll.getYesCount(), 
+        		newPoll.getStartTime(), newPoll.getEndTime(),newPoll.isPublic(), newPoll.getStatus(), 
+        		newPoll.getAccessCode(), creator);
+    }
 	
 }

@@ -95,14 +95,13 @@ public class VoteDAOImplementation implements VoteDAO {
 	}
 
 	@Override
-	public Vote findUserVote(Long pollId, Long userId) {
+	public Vote findUserVote(Poll poll, FAUser user) {
 		EntityManager em = emf.createEntityManager();        
         Vote vote = null;
-
 		try {
-			TypedQuery<Vote> q = em.createQuery("SELECT v from VOTE v WHERE v.fauser_id = :userId AND v.poll_id = :pollId", Vote.class);
-			q.setParameter("userId", userId);
-			q.setParameter("pollId", pollId);
+			TypedQuery<Vote> q = em.createQuery("SELECT v FROM Vote v WHERE v.voter = :user AND v.votePoll = :poll", Vote.class);
+			q.setParameter("user", user);
+			q.setParameter("poll", poll);
 			vote = q.getSingleResult();
 		} catch (NoResultException e) {
 			
